@@ -1,0 +1,38 @@
+* {
+    font-size: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+h1 {
+    font-size: x-large;
+    text-align: center;
+}
+
+h2 {
+    font-size: larger;
+    text-align: center;
+}
+
+input {
+    width: 93%;
+    margin: 5px;
+}
+
+button {
+    float: none;
+}
+
+form {
+    text-align: center;
+}
+
+form button {
+    width: 60%;
+    margin: 5px;
+}
+
+.major-container {
+    width: fit-content;
+    margin: auto;
+    padding: 20px;
+}
