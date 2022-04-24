@@ -1,7 +1,8 @@
 <template>
   <div>
     <div>
-      <h1 class="green">bienvenido a if (lost)</h1>
+      <h1 class="green">Bienvenido a </h1> 
+      <img src="images\logonegro.png" alt="if lost" class="logo">
       <h2>Crea una cuenta para comenzar</h2>
     </div>
 
@@ -19,10 +20,8 @@
 
     <div>
       <h2>
-        ¿Ya tienes una cuenta? <br />
-        <button v-on:click="iniciarSesión++" id="botonInicio">
-          Inicia sesión
-        </button>
+        ¿Ya tienes una cuenta?
+        <a v-on:click="iniciarSesión++" id="botonInicio" href="#">Inicia sesión</a>
       </h2>
     </div>
 

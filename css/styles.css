@@ -20,6 +20,8 @@ input {
 
 button {
     float: none;
+    width: 60%;
+    margin: 5px;
 }
 
 form {
@@ -35,4 +37,10 @@ form button {
     width: fit-content;
     margin: auto;
     padding: 20px;
+}
+
+.logo {
+    width: 150px;
+    margin: auto;
+    display: block;
 }
