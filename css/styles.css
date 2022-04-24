@@ -13,6 +13,10 @@ h2 {
     text-align: center;
 }
 
+h3 {
+    text-align: center;
+}
+
 input {
     width: 93%;
     margin: 5px;
@@ -34,7 +38,7 @@ form button {
 }
 
 .major-container {
-    width: fit-content;
+    width: 300px;
     margin: auto;
     padding: 20px;
 }
