@@ -20,6 +20,7 @@ h3 {
 input {
     width: 93%;
     margin: 5px;
+    font-family: 'Roboto Mono', monospace;
 }
 
 button {
@@ -44,7 +45,7 @@ form button {
 }
 
 .logo {
-    width: 150px;
+    width: 250px;
     margin: auto;
     display: block;
 }
