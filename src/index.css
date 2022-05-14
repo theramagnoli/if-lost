@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+.btn-blue {
+  @apply rounded-lg w-full bg-sky-600 mt-4 py-2 text-gray-50 focus:bg-sky-700 focus:scale-[102%] transition-all;
+}
+.btn-gray {
+  @apply rounded-lg w-full bg-gray-300 mt-4 py-2 text-gray-800 focus:bg-gray-400 focus:scale-[102%] transition-all;
+}
+.btn-red {
+  @apply rounded-lg w-full bg-red-600 mt-4 py-2 text-gray-50 focus:bg-red-800 focus:scale-[102%] transition-all;
+}
+.btn-home {
+  @apply rounded-lg w-full mt-4 py-10 bg-gray-200 focus:bg-sky-700 text-gray-800 focus:text-gray-50 focus:scale-[102%]
+  transition-all;
+}
+.ttl-1 {
+  @apply text-3xl font-bold text-center tracking-wide;
+}
+.subttl {
+  @apply text-center;
+}
+.perfil {
+  @apply rounded-3xl aspect-square object-cover justify-self-center border-4 shadow-2xl transition-all hover:scale-[105%];
+}
+.inp {
+  @apply rounded-lg px-3 py-2 w-full bg-gray-50 shadow-inner focus:shadow-md;
+}
+.lbl {
+  @apply rounded-lg py-1 pl-2 w-full font-semibold;
+}
+.note {
+  @apply rounded-lg px-2 py-2 bg-gray-50 mb-2 shadow-inner;
+}
+.notettl {
+  @apply block italic;
+}
+.menu-hidden {
+  @apply -bottom-20 w-[95%] bg-gray-200 h-32 grid gap-16 rounded-t-xl px-5 pt-4 pb-16 fixed
+  justify-self-center shadow-2xl mt-40 hover:bottom-0 transition-all;
+}
+.btn-menu {
+  @apply rounded-full bg-gray-100 text-gray-800 justify-self-end aspect-square p-3 grid;
+}
+@tailwind utilities;
