@@ -3,13 +3,13 @@
   <div class="grid mb-8">
     <div class="justify-self-center flex text-xs">
       <h2
-        class="font-semibold text-center mt-4 bg-gray-400 text-white pt-2 pb-2 w-8 rounded-full"
+        class="font-semibold text-center mt-4 bg-gray-50 text-gray-900 pt-2 pb-2 w-8 rounded-full shadow-inner"
       >
         {{ paso + 1 }}
       </h2>
       <h2 class="text-center mt-4 pt-2 pb-2 w-10">de</h2>
       <h2
-        class="font-semibold text-center mt-4 bg-gray-400 text-white pt-2 pb-2 w-8 rounded-full"
+        class="font-semibold text-center mt-4 bg-gray-50 text-gray-900 pt-2 pb-2 w-8 rounded-full shadow-inner"
       >
         5
       </h2>
@@ -220,7 +220,7 @@
       <div>
         <p class="lbl">Hora de regreso</p>
 
-        <p class="note">{{ hora_alerta }}:{{ minutos_salida }}</p>
+        <p class="note">{{ hora_alerta }}:{{ minutos_alerta }}</p>
       </div>
     </div>
     <div class="grid grid-cols-2 gap-2">
@@ -324,11 +324,10 @@ export default {
       return horaComoFecha;
     },
     async crearViaje() {
-      // tomar en que se creará el temporizador para el día siguiente,
-      // si la hora de alerta es menor que la hora en la que crea el viaje el usuario
-      // CORREGIR
       let sig_dia;
-      if (this.hora_alerta < this.hora_salida) {
+      let hoy = new Date();
+      let ahora = hoy.getHours();
+      if (this.hora_alerta < this.hora_salida || this.hora_alerta < ahora) {
         sig_dia = true;
       } else {
         sig_dia = false;
@@ -352,7 +351,7 @@ export default {
             infoimg: this.infofoto,
           });
         }
-        this.$router.push("/");
+        this.$router.push("/if-lost/");
       });
     },
     async previsualizar() {
@@ -381,7 +380,7 @@ export default {
         if (user) {
           this.uid = user.uid;
         } else {
-          this.$router.push("/login");
+          this.$router.push("/if-lost/login");
         }
       });
     },

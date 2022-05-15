@@ -4,13 +4,15 @@
   </div>
   <div class="place-items-center grid-cols-1">
     <div>
-      <button class="btn-home" v-on:click="$router.push('/viajar')">
-        Quiero viajar seguro
+      <button class="btn-home" v-on:click="$router.push('/if-lost/viajar')">
+        Viajar seguro
       </button>
-      <button class="btn-home" v-on:click="$router.push('/rastrear')">
-        Estoy buscando a alguien
+      <button class="btn-home" v-on:click="$router.push('/if-lost/rastrear')">
+        Rastrear a alguien
       </button>
-      <button class="btn-home">Enviar alerta ahora</button>
+      <button class="btn-home" v-on:click="$router.push('/if-lost/404')">
+        Enviar alerta ahora
+      </button>
     </div>
   </div>
 </template>
@@ -23,7 +25,7 @@ export default {
       onAuthStateChanged(auth, (user) => {
         if (user) {
         } else {
-          this.$router.push("/login");
+          this.$router.push("/if-lost/login");
         }
       });
     },

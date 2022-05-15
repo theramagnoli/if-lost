@@ -10,7 +10,7 @@
   @apply rounded-lg w-full bg-red-600 mt-4 py-2 text-gray-50 focus:bg-red-800 focus:scale-[102%] transition-all;
 }
 .btn-home {
-  @apply rounded-lg w-full mt-4 py-10 bg-gray-200 focus:bg-sky-700 text-gray-800 focus:text-gray-50 focus:scale-[102%]
+  @apply rounded-lg w-full mt-4 py-8 bg-gray-200 focus:bg-sky-700 text-gray-800 focus:text-gray-50 focus:scale-[102%]
   transition-all;
 }
 .ttl-1 {
@@ -38,7 +38,15 @@
   @apply -bottom-20 w-[95%] bg-gray-200 h-32 grid gap-16 rounded-t-xl px-5 pt-4 pb-16 fixed
   justify-self-center shadow-2xl mt-40 hover:bottom-0 transition-all;
 }
+.alerta {
+  @apply fixed bottom-10 pb-6 pt-3 rounded-t-xl w-[95%] bg-green-400 text-center 
+  text-gray-50 gap-4 justify-self-center place-content-center flex transition-colors;
+}
 .btn-menu {
-  @apply rounded-full bg-gray-100 text-gray-800 justify-self-end aspect-square p-3 grid;
+  @apply rounded-full bg-gray-100 text-gray-400 justify-self-end aspect-square p-3 grid shadow-inner
+  ml-4;
+}
+.router-link-exact-active {
+  @apply shadow-lg text-gray-800;
 }
 @tailwind utilities;

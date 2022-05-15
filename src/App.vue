@@ -1,20 +1,16 @@
 <template>
-  <div class="h-full w-full fixed bg-black hidden" ref="loader"></div>
-  <div class="p-5" ref="view"><router-view></router-view></div>
-  <div
-    ref="tempodiv"
-    v-if="tempo == true"
-    class="fixed bottom-10 pb-14 pt-3 rounded-t-3xl w-full bg-green-400 text-center text-white text-xs grid grid-cols-2 gap-10"
-  >
-    <div class="justify-self-end place-content-center">
-      <div>
-        <h4>Tu alerta se enviará en:</h4>
-        <div id="temporizador" ref="temporizador"></div>
+  <div class="p-5" ref="views"><router-view></router-view></div>
+  <div class="grid">
+    <div ref="tempodiv" class="alerta hidden">
+      <div class="justify-self-end place-content-center">
+        <p
+          id="temporizador"
+          ref="temporizador"
+          class="text-white animate-pulse pl-2 text-sm font-medium"
+        ></p>
       </div>
-    </div>
-    <div class="justify-self-start place-content-center">
       <button
-        class="rounded-full w-full bg-sky-600 px-2 py-2 text-white hover:bg-sky-800"
+        class="btn-red rounded-full mr-5 ml-5 mt-0 w-[33%] text-sm"
         v-on:click="cancelarAlerta()"
         v-if="tempo == true"
       >
@@ -22,7 +18,7 @@
       </button>
     </div>
   </div>
-  <div class="grid grid-cols-1 mt-28">
+  <div class="grid grid-cols-1 mt-24">
     <div class="menu-hidden" ref="menu">
       <div class="grid grid-rows-2">
         <i
@@ -36,11 +32,16 @@
               class="max-h-12 p-3 self-center"
             />
           </div>
-          <div class="grid grid-cols-2 mb-2" ref="accesos">
-            <router-link class="btn-menu" to="/">
+          <div class="flex mb-2" ref="accesos">
+            <router-link class="btn-menu" to="/if-lost/">
               <i class="fa-solid fa-house justify-self-center self-center"></i
             ></router-link>
-            <router-link class="btn-menu" to="cuenta"
+            <router-link class="btn-menu" to="/if-lost/404">
+              <i
+                class="fa-solid fa-newspaper justify-self-center self-center"
+              ></i
+            ></router-link>
+            <router-link class="btn-menu" to="/if-lost/cuenta"
               ><i class="fa-solid fa-user justify-self-center self-center"></i
             ></router-link>
           </div>
@@ -72,6 +73,7 @@ export default {
     Temporizador(fecha) {
       let that = this;
       var countDownDate = new Date(fecha).getTime();
+      this.$refs.tempodiv.classList.remove("hidden");
       var x = setInterval(function () {
         var now = new Date().getTime();
         var distance = countDownDate - now;
@@ -80,8 +82,24 @@ export default {
         );
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        document.getElementById("temporizador").innerHTML =
-          hours + " hrs " + minutes + " min " + seconds + " seg ";
+        if (hours > 1) {
+          document.getElementById("temporizador").innerHTML =
+            "Tu alerta se enviará en<br/>" +
+            hours +
+            " horas " +
+            minutes +
+            " minutos ";
+        } else {
+          if (minutes < 10) {
+            that.$refs.tempodiv.classList.add("bg-red-400");
+          }
+          document.getElementById("temporizador").innerHTML =
+            "Tu alerta se enviará en<br/>" +
+            minutes +
+            " minutos " +
+            seconds +
+            " segundos ";
+        }
         if (distance < 0) {
           clearInterval(x);
           document.getElementById("temporizador").innerHTML =
@@ -100,15 +118,10 @@ export default {
         }
       });
       let nombres = nombre.split(" ");
-      let arr = this.datos.destino.split(" ");
-      for (var i = 0; i < arr.length; i++) {
-        arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
-      }
-      let destino = arr.join(" ");
       datos = {
         nombre: nombres[0],
         apellido: nombres[1],
-        destino: destino,
+        destino: this.destino,
         hora_alerta: this.datos.hora_llegada,
         clave: this.uid,
         email: this.datos.correo_contacto,
@@ -130,6 +143,7 @@ export default {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           this.uid = user.uid;
+          this.$refs.accesos.classList.remove("hidden");
           const ref = doc(database, "viajes", user.uid);
           const datos = await getDoc(ref);
           if (datos.exists()) {
@@ -137,12 +151,12 @@ export default {
             if (this.datos.fecha_alerta > 1) {
               this.Temporizador(this.datos.fecha_alerta);
               this.tempo = true;
-              this.$refs.views.classList.remove("mb-28");
-              this.$refs.views.classList.add("mb-36");
+              this.$refs.views.classList.add("mb-12");
             }
           }
         } else {
           this.$refs.accesos.classList.add("hidden");
+          this.$refs.tempodiv.classList.add("hidden");
         }
       });
     },
@@ -157,16 +171,11 @@ export default {
   mounted() {
     this.obtenerTemporizador();
     emailjs.init("NDQJF30o6mjc6lt_F");
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        this.$refs.accesos.classList.remove("hidden");
-      } else {
-        this.$refs.accesos.classList.add("hidden");
-      }
-    });
   },
   watch: {
-    $route: function (to, from) {},
+    $route: function (to, from) {
+      this.obtenerTemporizador();
+    },
   },
 };
 </script>

@@ -109,7 +109,7 @@
             alt="perfil"
             ref="perfil"
             width="200"
-            class="rounded-full aspect-square object-cover border-4"
+            class="perfil"
           />
           <label type="input" for="perfil" class="btn-gray text-center">
             Subir imagen
@@ -248,7 +248,7 @@ export default {
     iniciarSesión() {
       signInWithEmailAndPassword(auth, this.correo_is, this.contraseña_is)
         .then((user) => {
-          this.$router.push("/");
+          this.$router.push("/if-lost/");
         })
         .catch((error) => {});
     },
@@ -301,7 +301,7 @@ export default {
     obtenerUsuario() {
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          this.$router.push("/");
+          this.$router.push("/if-lost/");
         }
       });
     },

@@ -91,7 +91,7 @@ export default {
     cerrarSesión() {
       signOut(auth)
         .then(() => {
-          this.$router.push("/login");
+          this.$router.push("/if-lost/login");
         })
         .catch((error) => {});
     },
@@ -119,7 +119,7 @@ export default {
               });
           }
         } else {
-          this.$router.push("/login");
+          this.$router.push("/if-lost/login");
         }
       });
     },
