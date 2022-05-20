@@ -27,13 +27,13 @@
     <div class="mt-4 grid">
       <h3 class="subttl">¿Ya tienes una cuenta?</h3>
       <div class="place-self-center">
-        <a
+        <button
           v-on:click="iniciar_sesión = true"
           id="botonInicio"
-          href="#"
           class="font-semibold underline"
-          >Inicia sesión</a
         >
+          Inicia sesión
+        </button>
       </div>
     </div>
   </div>
@@ -158,13 +158,13 @@
     <div class="mt-4 grid">
       <h3 class="subttl">¿Aún no tienes cuenta?</h3>
       <div class="place-self-center">
-        <a
+        <button
           class="font-semibold underline"
           v-on:click="iniciar_sesión = false"
           id="botonCrearCuenta"
-          href="#"
-          >Crea una</a
         >
+          Crea una
+        </button>
       </div>
     </div>
   </div>
@@ -221,7 +221,39 @@ export default {
         displayName: this.nombre_cc + " " + this.apellidos_cc,
       })
         .then(() => {})
-        .catch((error) => {});
+        .catch((error) => {
+          switch (error.code) {
+            case "auth/email-already-exists":
+              mensaje =
+                "El correo ha sido usado. Si ya tienes una cuenta, incia sesión";
+              break;
+            case "auth/invalid-email":
+              mensaje = "Correo inválido. Ingresa un correo electrónico válido";
+              break;
+            case "auth/invalid-password":
+              mensaje =
+                "Contraseña inválida. Las constraseñas deben tener por lo menos 6 caracteres";
+              break;
+            default:
+              mensaje =
+                "Ha ocurrido un error desconocido, revisa que hayas ingresado correctamente tus datos";
+              break;
+          }
+          Swal.fire({
+            toast: true,
+            position: "bottom",
+            iconColor: "white",
+            customClass: {
+              popup: "colored-toast",
+            },
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            icon: "error",
+            title: mensaje,
+          });
+          this.paso = 0;
+        });
       onAuthStateChanged(auth, (user) => {
         if (user) {
           this.uid = user.uid;
@@ -248,9 +280,41 @@ export default {
     iniciarSesión() {
       signInWithEmailAndPassword(auth, this.correo_is, this.contraseña_is)
         .then((user) => {
-          this.$router.push("/if-lost/");
+          this.$router.push("/");
         })
-        .catch((error) => {});
+        .catch((error) => {
+          let mensaje;
+          console.log(error.code);
+          switch (error.code) {
+            case "auth/user-not-found":
+              mensaje =
+                "El usuario no existe. Si no aún no tienes cuenta, crea una";
+              break;
+            case "auth/wrong-password":
+              mensaje = "Contraseña incorrecta";
+              break;
+            case "auth/too-many-requests":
+              mensaje = "Ya intentaste muchas veces, espera un momento";
+              break;
+            default:
+              mensaje =
+                "Ha ocurrido un error desconocido, revisa que hayas ingresado correctamente tus datos";
+              break;
+          }
+          Swal.fire({
+            toast: true,
+            position: "bottom",
+            iconColor: "white",
+            customClass: {
+              popup: "colored-toast",
+            },
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            icon: "error",
+            title: mensaje,
+          });
+        });
     },
     subirPerfil(img) {
       let that = this;
@@ -301,7 +365,7 @@ export default {
     obtenerUsuario() {
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          this.$router.push("/if-lost/");
+          this.$router.push("/");
         }
       });
     },

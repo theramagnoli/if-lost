@@ -17,9 +17,14 @@ import {
   collection,
   getDoc,
   updateDoc,
+  serverTimestamp,
+  where,
+  orderBy,
+  query,
+  limit,
 } from "firebase/firestore";
 
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCO-1zlqihZNJAGUqfbezRKdAbx2xVRurA",
@@ -53,4 +58,10 @@ export {
   signOut,
   ref,
   uploadBytes,
+  getDownloadURL,
+  serverTimestamp,
+  where,
+  orderBy,
+  query,
+  limit,
 };

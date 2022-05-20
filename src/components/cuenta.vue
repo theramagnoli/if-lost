@@ -1,29 +1,25 @@
 <template>
   <div class="grid">
-    <h1 class="text-3xl font-bold text-center tracking-wide">Mi cuenta</h1>
-    <div class="place-self-center pt-4 grid mt-6">
-      <img
-        src="https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/perfiles%2Fperfil.png?alt=media"
-        alt="perfil"
-        ref="perfil"
-        width="200"
-        class="perfil"
-      />
+    <h1 class="ttl-1">Mi perfil</h1>
+    <div class="place-self-center grid">
+      <img :src="perfil" alt="perfil" ref="perfil" class="perfil" />
     </div>
-    <h4 class="text-3xl font-semibold tracking-wide text-center mt-5">
-      {{ nombres }}
-    </h4>
-    <p class="mt-2 text-center text-sm">
-      <i class="fa-solid fa-location-pin"></i>&nbsp;&nbsp;{{ datos.ciudad }}
-    </p>
+    <div>
+      <h4 class="text-3xl font-medium text-center mt-5">
+        {{ usuario.nombre }}
+      </h4>
+      <p class="mt-1 text-center text-sm text-gray-500">
+        de {{ usuario.ciudad }}
+      </p>
+    </div>
     <div class="grid" v-if="paso == 0">
       <p class="mt-8 px-4 font-semibold">Acerca de ti</p>
-      <p class="px-4" v-if="datos.descripcion">
-        {{ datos.descripcion }}
+      <p class="px-4" v-if="usuario.descripcion">
+        {{ usuario.descripcion }}
       </p>
       <p class="px-4" v-else>
-        ¿Qué te gustaría que el mundo supiera de {{ datos.nombres }}? Edita tu
-        perfil para actualizar tu descripción
+        ¿Qué te gustaría que el mundo supiera de ti? Edita tu perfil para
+        actualizar tu descripción
       </p>
       <button v-on:click="paso = 1" class="btn-blue mt-12">
         Editar perfil
@@ -48,14 +44,15 @@
       required
     />
     <textarea
+      ref="nuevadescripcion"
       class="inp"
-      placeholder="Añade una descripción. Dile al mundo sobre ti..."
-      v-model="nueva_descripcion"
+      rows="3"
+      :value="usuario.descripcion"
     ></textarea>
     <button v-on:click="guardar()" ref="guardar" class="btn-blue">
       Guardar cambios
     </button>
-    <button v-on:click="reload()" class="btn-gray">Volver y descartar</button>
+    <button v-on:click="paso = 0" class="btn-gray">Volver y descartar</button>
   </div>
 </template>
 <script>
@@ -64,62 +61,44 @@ import {
   auth,
   storage,
   signOut,
-  getDoc,
   doc,
   onAuthStateChanged,
   ref,
   uploadBytes,
   updateDoc,
+  getDownloadURL,
 } from "/js/firebase.js";
 export default {
   data() {
     return {
-      datos: [],
       img: null,
-      uid: "",
+      perfil: "",
       paso: 0,
-      nombres: "",
-      nueva_descripcion: "",
+      borrar_perfil: false,
     };
   },
   computed: {
     currentRouteName() {
       return this.$route.name;
     },
+    usuario() {
+      return this.$store.state.usuario;
+    },
   },
   methods: {
     cerrarSesión() {
       signOut(auth)
         .then(() => {
-          this.$router.push("/if-lost/login");
+          this.$router.push("/login");
         })
-        .catch((error) => {});
+        .catch((error) => {
+          // mostrar error al cerrar sesión, intentar de nuevo
+        });
     },
     obtenerUsuario() {
-      let that = this;
       onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.uid = user.uid;
-          this.nombres = user.displayName;
-          if (this.$route.name == "cuenta") {
-            fetch(
-              "https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/perfiles%2F" +
-                this.uid
-            )
-              .then(function (resp) {
-                return resp.json();
-              })
-              .then(function (data) {
-                if (data.name) {
-                  that.$refs.perfil.src =
-                    "https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/perfiles%2F" +
-                    that.uid +
-                    "?alt=media";
-                }
-              });
-          }
-        } else {
-          this.$router.push("/if-lost/login");
+        if (!user) {
+          this.$router.push("/login");
         }
       });
     },
@@ -146,6 +125,7 @@ export default {
       };
     },
     async guardar() {
+      this.$refs.guardar.innerHTML = "Guardando...";
       let that = this;
       function dataURLtoFile(dataurl, filename) {
         var arr = dataurl.split(","),
@@ -160,34 +140,27 @@ export default {
       }
       if (that.img == 1) {
         var img_dowsized = dataURLtoFile(that.$refs.perfil.src, "perfil.png");
-        const storeref = ref(storage, "perfiles/" + that.uid);
+        const storeref = ref(storage, "perfiles/" + that.usuario.id);
         await uploadBytes(storeref, img_dowsized).then((snapshot) => {});
       }
-      await onAuthStateChanged(auth, (user) => {
-        if (user) {
-          updateDoc(doc(database, "infoUsuarios", user.uid), {
-            descripcion: that.nueva_descripcion,
-          });
-        }
-        this.$router.go();
+      await updateDoc(doc(database, "infoUsuarios", this.usuario.id), {
+        descripcion: that.$refs.nuevadescripcion.value,
       });
-    },
-    reload() {
-      this.$router.go();
+      this.usuario.descripcion = this.$refs.nuevadescripcion.value;
+      this.$refs.guardar.innerHTML = "Se guardaron los cambios";
+      this.$refs.guardar.classList.add("bg-green-400", "hover:bg-green-400");
+      setTimeout(function (e) {
+        that.$refs.guardar.innerHTML = "Guardar cambios";
+        that.$refs.guardar.classList.remove(
+          "bg-green-400",
+          "hover:bg-green-400"
+        );
+      }, 2000);
     },
   },
   async mounted() {
+    this.perfil = this.usuario.perfil;
     this.obtenerUsuario();
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const ref = doc(database, "infoUsuarios", user.uid);
-        const datos = await getDoc(ref);
-        if (datos.exists()) {
-          this.datos = datos.data();
-        }
-        this.nueva_descripcion = this.datos.descripcion;
-      }
-    });
   },
 };
 </script>

@@ -1,19 +1,7 @@
 <template>
-  <h1 class="ttl-1">Crear viaje</h1>
-  <div class="grid mb-8">
-    <div class="justify-self-center flex text-xs">
-      <h2
-        class="font-semibold text-center mt-4 bg-gray-50 text-gray-900 pt-2 pb-2 w-8 rounded-full shadow-inner"
-      >
-        {{ paso + 1 }}
-      </h2>
-      <h2 class="text-center mt-4 pt-2 pb-2 w-10">de</h2>
-      <h2
-        class="font-semibold text-center mt-4 bg-gray-50 text-gray-900 pt-2 pb-2 w-8 rounded-full shadow-inner"
-      >
-        5
-      </h2>
-    </div>
+  <h1 class="ttl-1 mb-[5%]">Crear viaje</h1>
+  <div class="mb-8 text-center text-gray-400">
+    <p>Paso {{ paso + 1 }} de 5</p>
   </div>
   <div v-if="paso == 0">
     <form v-on:submit.prevent="paso++">
@@ -36,12 +24,11 @@
       </div>
       <div class="mapouter">
         <div class="gmap_canvas shadow-xl">
-          <!-- en src, la ciudad hay que reemplazarla por la que el usuario tenga en sus datos -->
           <iframe
             width="100%"
             height="100%"
             id="gmap_canvas"
-            src="https://maps.google.com/maps?q=monterrey&t=&z=13&ie=UTF8&iwloc=&output=embed"
+            :src="mapa"
             frameborder="0"
             scrolling="no"
             marginheight="0"
@@ -55,7 +42,7 @@
         </p>
         <textarea
           v-model="info_destino"
-          placeholder="ej. La casa de Jorge"
+          placeholder="ej. La casa de un amigo o amiga"
           class="inp"
           rows="3"
         ></textarea>
@@ -84,7 +71,7 @@
             class="inp w-[30%] text-center"
           />
         </div>
-        <p class="lbl text-center mt-4">Y la hora a la que planeas regresar</p>
+        <p class="lbl text-center mt-4">Y a qué hora planeas regresar</p>
         <div class="flex place-content-center">
           <input
             type="number"
@@ -168,14 +155,12 @@
   </div>
   <div v-if="paso == 3">
     <form v-on:submit.prevent="previsualizar()">
-      <p class="lbl mt-2">
-        En este espacio puedes agregar una nota para tu contacto de confianza
-      </p>
+      <p class="lbl mt-2">En este espacio puedes agregar una nota</p>
       <textarea
-        v-model="infoextra"
+        v-model="nota"
         class="inp"
         rows="5"
-        placeholder="ej. Llevo un camisa blanca"
+        placeholder="Lo que sea, esta nota solo la verá tu contacto de confianza"
       />
       <button type="submit" class="btn-gray">Continuar</button>
       <button v-on:click.prevent="paso--" class="btn-gray">Volver</button>
@@ -240,8 +225,8 @@
       </p>
     </div>
     <div>
-      <p v-if="infoextra.length > 0" class="note">
-        <span class="notettl">Nota</span>{{ infoextra }}
+      <p v-if="nota.length > 0" class="note">
+        <span class="notettl">Nota</span>{{ nota }}
       </p>
       <p v-else class="note">
         <span class="notettl">No se agregó una nota</span>
@@ -262,9 +247,9 @@ import {
   onAuthStateChanged,
   doc,
   setDoc,
-  getDoc,
   ref,
   uploadBytes,
+  serverTimestamp,
 } from "/js/firebase.js";
 export default {
   data() {
@@ -275,39 +260,42 @@ export default {
       minutos_salida: "00",
       hora_alerta: "17",
       minutos_alerta: "00",
-      infoextra: "",
+      nota: "",
       img: "",
       imgurl: "",
       infofoto: "",
       mapa: "",
       mapa_google: "",
       paso: 0,
-      datos: [],
-      uid: "",
       srcimg:
         "https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/assets%2Fcamera.png?alt=media",
     };
   },
+  computed: {
+    usuario() {
+      return this.$store.state.usuario;
+    },
+  },
   mounted() {
     this.obtenerUsuario();
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const ref = doc(database, "infoUsuarios", user.uid);
-        const datos = await getDoc(ref);
-        if (datos.exists()) {
-          this.datos = datos.data();
-        }
-      }
-    });
+    this.mapa =
+      "https://maps.google.com/maps?q=" +
+      this.usuario.ciudad +
+      "&t=&z=13&ie=UTF8&iwloc=&output=embed";
   },
   methods: {
     buscarEnMapa() {
+      let arr = this.destino.split(" ");
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
+      }
+      this.destino = arr.join(" ");
       let newsrc =
         "https://maps.google.com/maps?q=" +
         this.destino +
+        ", " +
+        this.usuario.ciudad +
         "&t=&z=13&ie=UTF8&iwloc=&output=embed";
-      let map = document.querySelector("#gmap_canvas");
-      map.setAttribute("src", newsrc);
       this.mapa = newsrc;
     },
     obtenerHoraComoFecha(hora, minutos, al_otro_día) {
@@ -332,27 +320,30 @@ export default {
       } else {
         sig_dia = false;
       }
-      await onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          await setDoc(doc(database, "viajes", user.uid), {
-            correo_contacto: this.datos.correo_contacto,
-            destino: this.destino,
-            mapa: this.mapa_google,
-            infoextra_destino: this.info_destino,
-            hora_salida: this.hora_salida + ":" + this.minutos_salida,
-            hora_llegada: this.hora_alerta + ":" + this.minutos_alerta,
-            infoextra: this.infoextra,
-            fecha_alerta: this.obtenerHoraComoFecha(
-              this.hora_alerta,
-              this.minutos_alerta,
-              sig_dia
-            ),
-            img: this.imgurl,
-            infoimg: this.infofoto,
-          });
-        }
-        this.$router.push("/if-lost/");
+      let clave = self.crypto.randomUUID();
+      await setDoc(doc(database, "viajes", clave), {
+        clave: clave,
+        creador: this.usuario.id,
+        creado: serverTimestamp(),
+        contacto: {
+          correo: this.usuario.contacto.correo,
+          tel: this.usuario.contacto.tel,
+        },
+        destino: this.destino,
+        mapa: this.mapa_google,
+        infodestino: this.info_destino,
+        salida: this.hora_salida + ":" + this.minutos_salida,
+        llegada: this.hora_alerta + ":" + this.minutos_alerta,
+        alerta: this.obtenerHoraComoFecha(
+          this.hora_alerta,
+          this.minutos_alerta,
+          sig_dia
+        ),
+        img: this.imgurl,
+        infoimg: this.infofoto,
+        nota: this.nota,
       });
+      this.$router.push("/");
     },
     async previsualizar() {
       await this.paso++;
@@ -365,11 +356,12 @@ export default {
       this.mapa_google =
         "https://maps.google.com/maps?q=" +
         this.destino +
+        this.usuario.ciudad +
         "&t=&z=13&ie=UTF8&iwloc=&";
       if (this.imgurl.length > 1) {
         img_prev.src =
           "https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/viajes%2F" +
-          this.uid +
+          this.usuario.id +
           "?alt=media";
       } else {
         img_prev.src = "/images/viajedef.jpg";
@@ -377,10 +369,8 @@ export default {
     },
     obtenerUsuario() {
       onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.uid = user.uid;
-        } else {
-          this.$router.push("/if-lost/login");
+        if (!user) {
+          this.$router.push("/login");
         }
       });
     },
@@ -442,18 +432,17 @@ export default {
           return new File([u8arr], filename, { type: mime });
         }
         var img_dowsized = dataURLtoFile(src_encoded, "perfil.png");
-        const storeref = ref(storage, "viajes/" + that.uid);
+        const storeref = ref(storage, "viajes/" + that.usuario.id);
         uploadBytes(storeref, img_dowsized).then((snapshot) => {
           that.imgurl =
             "https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/viajes%2F" +
-            that.uid +
+            that.usuario.id +
             "?alt=media";
           that.srcimg = src_encoded;
         });
       };
     },
   },
-  watch: {},
 };
 </script>
 

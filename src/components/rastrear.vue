@@ -26,8 +26,8 @@
           >
         </p>
       </div>
-      <p v-if="datos.infoextra_destino.length > 0" class="note">
-        <span class="notettl">Detalles</span>{{ datos.info_destino }}
+      <p v-if="datos.infodestino.length > 0" class="note">
+        <span class="notettl">Detalles</span>{{ datos.infodestino }}
       </p>
       <p v-else class="note">
         <span class="notettl">No se agregaron más detalles</span>
@@ -36,12 +36,12 @@
     <div class="grid grid-cols-2 gap-2">
       <div>
         <p class="lbl">Hora de salida</p>
-        <p class="note">{{ datos.hora_salida }}</p>
+        <p class="note">{{ datos.salida }}</p>
       </div>
       <div>
         <p class="lbl">Hora de regreso</p>
 
-        <p class="note">{{ datos.hora_llegada }}</p>
+        <p class="note">{{ datos.llegada }}</p>
       </div>
     </div>
     <div class="grid grid-cols-2 gap-2">
@@ -59,8 +59,8 @@
       </p>
     </div>
     <div>
-      <p v-if="datos.infoextra.length > 0" class="note">
-        <span class="notettl">Nota</span>{{ datos.infoextra }}
+      <p v-if="datos.nota.length > 0" class="note">
+        <span class="notettl">Nota</span>{{ datos.nota }}
       </p>
       <p v-else class="note">
         <span class="notettl">No se agregó una nota</span>
@@ -87,24 +87,63 @@ export default {
   },
   methods: {
     async rastrear() {
-      this.obtenerUsuario();
       const ref = doc(database, "viajes", this.clave.trim());
       const datos = await getDoc(ref);
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "bottom",
+        iconColor: "white",
+        customClass: {
+          popup: "colored-toast",
+        },
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+      });
       if (datos.exists()) {
         this.datos = datos.data();
-        this.paso = 1;
+        if (this.datos.contacto.correo == this.usuario.correo) {
+          if (this.datos.alerta == null) {
+            this.paso = 1;
+          } else {
+            Toast.fire({
+              icon: "error",
+              title: "No se encontró el viaje",
+              text: "Asegúrate de haber proporcionado la clave correcta",
+            });
+          }
+        } else {
+          Toast.fire({
+            icon: "error",
+            title:
+              "Al parecer no eres un contacto de confianza del autor del viaje",
+            text: "Revisa que tu clave sea la correcta",
+          });
+        }
       } else {
+        Toast.fire({
+          icon: "error",
+          title: "No se encontró el viaje",
+          text: "Asegúrate de haber proporcionado la clave correcta",
+        });
       }
     },
     obtenerUsuario() {
       onAuthStateChanged(auth, (user) => {
         if (user) {
         } else {
-          this.$router.push("/if-lost/login");
+          this.$router.push("/login");
         }
       });
     },
   },
-  mounted() {},
+  mounted() {
+    this.obtenerUsuario();
+  },
+  computed: {
+    usuario() {
+      return this.$store.state.usuario;
+    },
+  },
 };
 </script>
