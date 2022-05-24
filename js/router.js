@@ -18,6 +18,14 @@ const routes = [
   },
   { path: "/login", name: "login", component: login },
   {
+    path: "/crearcuenta",
+    name: "crearcuenta",
+    component: () =>
+      import(
+        /* webpackChunkName: "crearcuenta" */ "../src/components/crearcuenta.vue"
+      ),
+  },
+  {
     path: "/rastrear",
     name: "rastrear",
     component: () =>

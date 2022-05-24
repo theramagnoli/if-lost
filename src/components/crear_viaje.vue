@@ -17,9 +17,9 @@
         />
         <button
           v-on:click.prevent="buscarEnMapa()"
-          class="btn-blue w-[10%] ml-[2%] flex-1 mt-0"
+          class="btn-blue w-[10%] ml-[2%] flex-1 mt-0 pb-0"
         >
-          <i class="fa-solid fa-magnifying-glass"></i>
+          <span class="material-symbols-rounded"> search </span>
         </button>
       </div>
       <div class="mapouter">
@@ -103,9 +103,9 @@
         <button
           type="button"
           v-on:click="tomarFoto()"
-          class="btn-blue w-[10%] ml-[2%] mt-0 py-0"
+          class="btn-blue w-[10%] ml-[2%] mt-0 pb-0"
         >
-          <i class="fa-solid fa-camera"></i>
+          <span class="material-symbols-rounded"> android_camera </span>
         </button>
       </div>
       <div class="mt-2 shadow-xl" ref="divfoto">
@@ -169,12 +169,10 @@
 
   <div v-if="paso == 4">
     <div class="note grid">
-      <p class="font-semibold">
-        Asegúrate que todos los detalles de tu viaje sean correctos;
-        <span class="font-normal"
-          >en caso de no avisar antes de la hora prevista, se enviarán a tu
-          contacto de confianza</span
-        >
+      <p>
+        Asegúrate que todos los detalles de tu viaje sean correctos. En caso de
+        no avisar antes de la hora prevista, se enviarán a tu contacto de
+        confianza
       </p>
       <button class="btn-gray w-[60%] justify-self-end">
         Ver mi contacto de confianza
@@ -232,7 +230,12 @@
         <span class="notettl">No se agregó una nota</span>
       </p>
     </div>
-    <button v-on:click.prevent="crearViaje()" v-if="paso == 4" class="btn-blue">
+    <button
+      v-on:click.prevent="crearViaje()"
+      v-if="paso == 4"
+      class="btn-blue"
+      ref="confirmarviaje"
+    >
       Confirmar viaje
     </button>
     <button v-on:click.prevent="paso--" class="btn-gray">Volver</button>
@@ -250,6 +253,7 @@ import {
   ref,
   uploadBytes,
   serverTimestamp,
+  updateDoc,
 } from "/js/firebase.js";
 export default {
   data() {
@@ -273,7 +277,7 @@ export default {
   },
   computed: {
     usuario() {
-      return this.$store.state.usuario;
+      return this.$store.getters.usuario;
     },
   },
   mounted() {
@@ -312,6 +316,7 @@ export default {
       return horaComoFecha;
     },
     async crearViaje() {
+      this.$refs.confirmarviaje.innerHTML = "Creando viaje...";
       let sig_dia;
       let hoy = new Date();
       let ahora = hoy.getHours();
@@ -343,6 +348,11 @@ export default {
         infoimg: this.infofoto,
         nota: this.nota,
       });
+      const ref_infousuarios = doc(database, "infoUsuarios", this.usuario.id);
+      await updateDoc(ref_infousuarios, {
+        viaje: clave,
+      });
+      this.$store.state.usuario.clave = clave;
       this.$router.push("/");
     },
     async previsualizar() {

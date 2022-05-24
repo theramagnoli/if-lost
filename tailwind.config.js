@@ -3,7 +3,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        main: ["Work Sans"],
+        main: ["Inter"],
       },
       screens: {
         desktop: "500px",

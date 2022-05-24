@@ -22,6 +22,7 @@ import {
   orderBy,
   query,
   limit,
+  onSnapshot,
 } from "firebase/firestore";
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -64,4 +65,5 @@ export {
   orderBy,
   query,
   limit,
+  onSnapshot,
 };

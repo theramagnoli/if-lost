@@ -9,7 +9,7 @@
         {{ usuario.nombre }}
       </h4>
       <p class="mt-1 text-center text-sm text-gray-500">
-        de {{ usuario.ciudad }}
+        viviendo en {{ usuario.ciudad }}
       </p>
     </div>
     <div class="grid" v-if="paso == 0">
@@ -39,7 +39,7 @@
       id="perfil"
       type="file"
       accept=".jpg, .jpeg, .png"
-      v-on:change="subirImg($event)"
+      v-on:change="redimensionar($event)"
       class="hidden"
       required
     />
@@ -52,7 +52,7 @@
     <button v-on:click="guardar()" ref="guardar" class="btn-blue">
       Guardar cambios
     </button>
-    <button v-on:click="paso = 0" class="btn-gray">Volver y descartar</button>
+    <button v-on:click="paso = 0" class="btn-gray">Volver</button>
   </div>
 </template>
 <script>
@@ -66,7 +66,6 @@ import {
   ref,
   uploadBytes,
   updateDoc,
-  getDownloadURL,
 } from "/js/firebase.js";
 export default {
   data() {
@@ -82,7 +81,7 @@ export default {
       return this.$route.name;
     },
     usuario() {
-      return this.$store.state.usuario;
+      return this.$store.getters.usuario;
     },
   },
   methods: {
@@ -102,7 +101,7 @@ export default {
         }
       });
     },
-    subirImg(img) {
+    redimensionar(img) {
       let that = this;
       this.img = img.target.files[0];
       const reader = new FileReader();
@@ -149,6 +148,7 @@ export default {
       this.usuario.descripcion = this.$refs.nuevadescripcion.value;
       this.$refs.guardar.innerHTML = "Se guardaron los cambios";
       this.$refs.guardar.classList.add("bg-green-400", "hover:bg-green-400");
+      this.$store.state.usuario.perfil = this.$refs.perfil.src;
       setTimeout(function (e) {
         that.$refs.guardar.innerHTML = "Guardar cambios";
         that.$refs.guardar.classList.remove(
