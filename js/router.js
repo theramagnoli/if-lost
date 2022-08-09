@@ -40,7 +40,7 @@ const routes = [
       import(/* webpackChunkName: "cuenta" */ "../src/components/cuenta.vue"),
   },
   {
-    path: "/404",
+    path: "/:pathMatch(.*)*",
     name: "404",
     component: () =>
       import(/* webpackChunkName: "404" */ "../src/components/404.vue"),
