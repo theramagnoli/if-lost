@@ -49,17 +49,11 @@
         <router-link class="btn-menu" to="/cuenta"
           ><span
             class="material-symbols-rounded self-center justify-self-center"
-            v-if="
-              usuario.perfil ==
-              'https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/perfiles%2Fperfil.png?alt=media&token=5a6ff639-cdc5-4372-a6c7-adc73e14fe47'
-            "
           >
-            person </span
-          ><img
-            :src="usuario.perfil"
-            class="object-cover rounded-full aspect-square"
-            v-else
-        /></router-link>
+            person
+          </span></router-link
+        >
+        <!-- <div>{{ myStatus }}</div> -->
       </div>
     </div>
   </div>
@@ -88,6 +82,9 @@ export default {
   computed: {
     usuario() {
       return this.$store.getters.usuario;
+    },
+    myStatus() {
+      return this.$store.getters.myStatus;
     },
   },
   methods: {

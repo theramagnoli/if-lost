@@ -38,6 +38,15 @@ const routes = [
     name: "cuenta",
     component: () =>
       import(/* webpackChunkName: "cuenta" */ "../src/components/cuenta.vue"),
+    children: [],
+  },
+  {
+    path: "/cuenta/config",
+    name: "configuracion",
+    component: () =>
+      import(
+        /* webpackChunkName: "cuenta" */ "../src/components/cuenta_config.vue"
+      ),
   },
   {
     path: "/:pathMatch(.*)*",

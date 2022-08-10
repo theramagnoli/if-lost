@@ -13,7 +13,10 @@ import {
 
 export const store = createStore({
   state: {
+    status: "loading",
     usuario: {
+      nombres: "",
+      apellidos: "",
       id: "",
       nombre: "",
       ciudad: "",
@@ -52,6 +55,8 @@ export const store = createStore({
           const datos = await getDoc(refusuario);
           if (datos.exists()) {
             let info = datos.data();
+            state.usuario.nombres = info.nombres;
+            state.usuario.apellidos = info.apellidos;
             state.usuario.ciudad = info.ciudad;
             state.usuario.descripcion = info.descripcion;
             state.usuario.tel = info.numero;
@@ -90,6 +95,7 @@ export const store = createStore({
             );
           }
         }
+        state.status = "loaded";
       });
     },
   },
@@ -97,6 +103,9 @@ export const store = createStore({
   getters: {
     usuario(state) {
       return state.usuario;
+    },
+    myStatus(state) {
+      return state.status;
     },
   },
 });
