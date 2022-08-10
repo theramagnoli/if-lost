@@ -23,7 +23,7 @@
   transition-all;
 }
 .ttl-1 {
-  @apply text-3xl font-semibold text-center tracking-wide uppercase mb-16;
+  @apply text-3xl font-semibold text-center tracking-wide uppercase mb-8 py-8 border-b;
 }
 .subttl {
   @apply text-center;
@@ -45,16 +45,16 @@
   @apply block italic;
 }
 .menu-hidden {
-  @apply -bottom-20 w-[95%] bg-gray-200 h-32 grid gap-16 rounded-t-xl px-5 pt-4 pb-16 fixed
-  justify-self-center shadow-2xl mt-40 hover:bottom-0 transition-all desktop:max-w-[450px];
+  @apply w-[100%] bg-gray-200 grid fixed
+  justify-self-center shadow-2xl bottom-0 transition-all desktop:max-w-[460px] desktop:rounded-t-xl p-1;
 }
 .alerta {
   @apply fixed bottom-10 pb-6 pt-3 rounded-t-xl w-[95%] bg-green-400 text-center 
-  text-gray-50 gap-4 justify-self-center place-content-center flex transition-colors desktop:max-w-[450px] py-3;
+  text-gray-50 gap-4 justify-self-center place-content-center flex transition-colors desktop:max-w-[500px] py-3;
 }
 .btn-menu {
-  @apply rounded-full bg-gray-100 text-gray-400 justify-self-end aspect-square p-3 grid shadow-inner
-  mx-4;
+  @apply rounded-full bg-gray-100 text-gray-400 justify-self-end aspect-square p-[2px] grid shadow-inner
+  mx-4 h-10 w-10;
 }
 .router-link-exact-active {
   @apply shadow-lg text-gray-800;

@@ -8,19 +8,14 @@
       <h4 class="text-3xl font-medium text-center mt-5">
         {{ usuario.nombre }}
       </h4>
-      <p class="mt-1 text-center text-sm text-gray-500">
-        viviendo en {{ usuario.ciudad }}
-      </p>
     </div>
     <div class="grid" v-if="paso == 0">
-      <p class="mt-8 px-4 font-semibold">Acerca de ti</p>
+      <p class="mt-8 px-4 font-semibold text-lg">Acerca de ti</p>
       <p class="px-4" v-if="usuario.descripcion">
         {{ usuario.descripcion }}
       </p>
-      <p class="px-4" v-else>
-        ¿Qué te gustaría que el mundo supiera de ti? Edita tu perfil para
-        actualizar tu descripción
-      </p>
+      <p class="px-4" v-else>Edita tu perfil para actualizar tu descripción</p>
+      <p class="px-4">Viviendo en {{ usuario.ciudad }}</p>
       <button v-on:click="paso = 1" class="btn-blue mt-12">
         Editar perfil
       </button>
@@ -155,7 +150,7 @@ export default {
           "bg-green-400",
           "hover:bg-green-400"
         );
-      }, 2000);
+      }, 1000);
     },
   },
   async mounted() {

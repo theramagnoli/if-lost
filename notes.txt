@@ -1,0 +1,14 @@
+ENTRE MÁS '*' MÁS IMPORTANTE. '' = NOTA
+
+***  Enviar SMS en vez de correo.
+***  Programar los mensajes de manera que no se necesite estar en la app cuando el temporizador se acaba.
+''   Estos 2 primeros problemas se pueden matar de un solo tiro con Twilio (https://www.twilio.com/blog/send-scheduled-sms-node-js-twilio),
+aunque la función creo que sigue en beta.
+
+**  Agregar funcion de 'enviar alerta ahora'.
+*   Agregar configuraciones de usuario (borrar foto de perfil, eliminar cuenta, etc.)
+*   Agregar sección de 'noticias'. (al último)
+
+''  También, contemplar la posiblidad de mudar todo la app a Flutter o ReactNative por lo mismo de la ubicación,
+que en navegadores nunca es muy exacta. ReactNative creo que sería mejor porque podríamos seguir trabajando en JavaScript.
+Aunque, creo, solo creo, que encontré una manera en la que se obtiene la ubicación correctamente.

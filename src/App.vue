@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5 desktop:max-w-[450px] desktop:m-auto" ref="views">
+  <div class="px-5 desktop:max-w-[500px] desktop:m-auto" ref="views">
     <router-view></router-view>
   </div>
   <div class="grid">
@@ -23,8 +23,7 @@
   </div>
   <div class="grid mt-24">
     <div class="menu-hidden" ref="menu">
-      <div class="grid grid-rows-3">
-        <div class="grid grid-cols-3">
+      <!-- <div class="grid grid-cols-3">
           <div class="flex col-span-2">
             <img
               src="https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/logo.svg?alt=media"
@@ -33,23 +32,34 @@
             <p class="text-xs ml-3">pre-alpha</p>
           </div>
           <i class="fa-solid fa-angle-up justify-self-end"></i>
-        </div>
-        <div
-          class="flex mb-2 justify-self-center row-span-2 pt-3"
-          ref="accesos"
+        </div> -->
+      <div class="flex mb-2 justify-self-center row-span-2 pt-3" ref="accesos">
+        <router-link class="btn-menu" to="/">
+          <span class="material-symbols-rounded self-center justify-self-center"
+            >home</span
+          >
+        </router-link>
+        <router-link class="btn-menu" to="/404">
+          <span
+            class="material-symbols-rounded self-center justify-self-center"
+          >
+            newspaper
+          </span></router-link
         >
-          <router-link class="btn-menu" to="/">
-            <span class="material-symbols-rounded">home</span>
-          </router-link>
-          <router-link class="btn-menu" to="/404">
-            <span class="material-symbols-rounded">
-              newspaper
-            </span></router-link
+        <router-link class="btn-menu" to="/cuenta"
+          ><span
+            class="material-symbols-rounded self-center justify-self-center"
+            v-if="
+              usuario.perfil ==
+              'https://firebasestorage.googleapis.com/v0/b/if-lost-159f6.appspot.com/o/perfiles%2Fperfil.png?alt=media&token=5a6ff639-cdc5-4372-a6c7-adc73e14fe47'
+            "
           >
-          <router-link class="btn-menu" to="/cuenta"
-            ><span class="material-symbols-rounded"> person </span></router-link
-          >
-        </div>
+            person </span
+          ><img
+            :src="usuario.perfil"
+            class="object-cover rounded-full aspect-square"
+            v-else
+        /></router-link>
       </div>
     </div>
   </div>
@@ -197,6 +207,7 @@ export default {
     if (this.$route.name != "home") {
       this.$router.push("/");
     }
+    console.log(this.usuario.perfil);
   },
   watch: {
     $route(a, de) {
